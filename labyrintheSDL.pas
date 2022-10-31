@@ -17,7 +17,6 @@ end;
 var fenetre : PSDL_Surface;
 begin
     initialise(fenetre);
-    SDL_Delay(1000);
     //fillRect(100, 100, 50, 50, 108, 214, 96, fenetre);
     setup;
     show(grid, fenetre);

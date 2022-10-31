@@ -23,14 +23,15 @@ begin
     begin
         x := grid[count].i * w;
         y := grid[count].j * w;
-        //if grid[count].visited = true then fillRect(x, y, w, w, 255, 0, 255, screen);
-        if grid[count].walls[0] then fillRect(x        , y        , w, 1, 150, test - count*2, 0, screen); // ligne à gauche de la cellule
-        if grid[count].walls[1] then fillRect(x        , y        , 1, w, 150, test - count*2, 0, screen); // ligne en haut de la cellule
-        if grid[count].walls[2] then fillRect(x + w - 1, y        , 1, w, 150, test - count*2, 0, screen); // ligne à droite de la cellule
-        if grid[count].walls[3] then fillRect(x        , y + w - 1, w, 1, 150, test - count*2, 0, screen); // ligne en bas de la cellule
+        //grid[count].visited := true;
+        if grid[count].visited = true then fillRect(x, y, w, w, 255, 0, 255, screen);
+        if grid[count].walls[0] then fillRect(x        , y        , w, 1, 255, 255, 255, screen); // ligne à gauche de la cellule
+        if grid[count].walls[1] then fillRect(x        , y        , 1, w, 255, 255, 255, screen); // ligne en haut de la cellule
+        if grid[count].walls[2] then fillRect(x + w - 1, y        , 1, w, 255, 255, 255, screen); // ligne à droite de la cellule
+        if grid[count].walls[3] then fillRect(x        , y + w - 1, w, 1, 255, 255, 255, screen); // ligne en bas de la cellule
         SDL_Flip(screen);
     end;
-    current.visited := true;
+    
 end;
 
 procedure setup;
@@ -53,7 +54,10 @@ begin
             count := count + 1;
         end;
     end;
-    current := grid[0];
+    grid[0].visited := true;
+    grid[26].visited := true;
+    grid[48].visited := true;
+    grid[73].visited := true;
 end;
 
 end.
