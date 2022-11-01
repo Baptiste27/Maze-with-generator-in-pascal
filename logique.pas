@@ -1,3 +1,10 @@
+{
+    Implementation de l'algorithme Randomized depth-first search
+
+    Sources : 
+        https://en.wikipedia.org/wiki/Maze_generation_algorithm#Randomized_depth-first_search
+        Video de Coding Train : https://youtu.be/HyK_Q5rrcr4
+}
 unit logique;
 
 interface
@@ -33,35 +40,41 @@ begin
         if grid[count].walls[2] then fillRect(x + w - 1, y        , 1, w, 255, 255, 255, screen); // ligne à droite de la cellule
         if grid[count].walls[3] then fillRect(x        , y + w - 1, w, 1, 255, 255, 255, screen); // ligne en bas de la cellule
         SDL_Flip(screen);
+        checkNeighbors(grid[count]);
         //writeln(grid[count].walls[0], grid[count].walls[3]);
     end;
-    checkNeighbors(grid[count]);
+    
     
 end;
 
 procedure calcIndex(i, j : Integer);
+var cols, rows : Integer;
 begin
-    index := i + j * (LARGEUR div w);
+    cols := LARGEUR div w;
+    rows := HAUTEUR div w;
+    if ((i < 0) or (j < 0) or (i > cols - 1) or (j > rows - 1)) then index := -1 // cas des cellules sur le bord de la grille
+    else index := i + j * (LARGEUR div w);
 end;
 
-procedure checkNeighbors(cell : Cell);
+procedure checkNeighbors(cell : Cell); // check si les voisins ont deja ete visite
 var neighbors : Array[0..3] of Cell;
 var top, right, bottom, left : Cell;
 begin
     calcIndex(cell.i, cell.j - 1);
-    top := grid[index];
+    if index <> -1 then top := grid[index] else top.visited := true;
     calcIndex(cell.i + 1, cell.j);
-    right := grid[index];                   { ~~~~~~~~~ CF video part 2 a 9min ~~~~~~~~ }
+    if index <> -1 then right := grid[index] else right.visited := true;                   
     calcIndex(cell.i, cell.j + 1);
-    bottom := grid[index];
+    if index <> -1 then bottom := grid[index] else bottom.visited := true; 
     calcIndex(cell.i - 1, cell.j);
-    left := grid[index];
+    if index <> -1 then left := grid[index] else left.visited := true; 
     //write(index); 
 
     if top.visited <> true then neighbors[0] := top;
-    if right.visited <> true then neighbors[0] := right;
-    if bottom.visited <> true then neighbors[0] := bottom;
-    if left.visited <> true then neighbors[0] := left;
+    if right.visited <> true then neighbors[1] := right;
+    if bottom.visited <> true then neighbors[2] := bottom;
+    if left.visited <> true then neighbors[3] := left;
+    writeln(neighbors[0].visited, ' ', neighbors[0].i, ' ', neighbors[0].j, ' ', neighbors[0].walls[0]);
 
 end;
 
