@@ -13,13 +13,13 @@ const
 
 {~~~~~~~~~~ Les types ~~~~~~~~~~}
 
-Type
+{ Type
     Cell = record 
         i, j : Integer;
         walls : Array[0..3] of Boolean;
         visited : Boolean;
     end;
-
+ \}
 {~~~~~~~~~~ Les procedures ~~~~~~~~~~}
 
 procedure fillRect(x, y, w, h, r, g, b : Integer; screen : PSDL_Surface);

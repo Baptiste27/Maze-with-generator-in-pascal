@@ -5,15 +5,16 @@ unit class_lab;
 
 interface
 
-uses const_lab, crt, typesLab, sdl;
+uses const_lab, crt, sdl;
 
 
 type 
     Cell = class
-    private
-        i, j : Integer; //coordonnes de la cellule
+//    private
+//        i, j : Integer; //coordonnes de la cellule
 
     public
+        i, j : Integer;
         walls : Array[0..3] of Boolean; //les booleans sont initialise sur false
         visited : Boolean;
         
@@ -24,7 +25,10 @@ end;
 
 function index(i, j : Integer) : Integer;
 
-var grid : array[0..99] of Cell; // 100 cellules dans le labyrinthe
+var grid : array[0..(nbCell-1)] of Cell; // nb cellules dans le labyrinthe
+var stack : array[0..nbCell-1] of Cell; // 100 cellules dans le labyrinthe
+var current, next: Cell;
+var undefined : Cell;
 
 implementation
 
@@ -43,33 +47,32 @@ end;
 function Cell.checkNeighbors() : Cell;
 
 var neighbors : Array[0..3] of Cell;
-var top, right, bottom, left, undefined : Cell;
+var top, right, bottom, left : Cell;
 var nbVoisins, count, count2, k, r : Integer;
 
 begin
-    Randomize;
     count := 0;                    
     count2 := 3;
     undefined := Cell.new(-1, -1);  // Cellule indefini
 
     k := index(i, j-1);                 // index de la cellule voisine du dessus
     if (k <> -1) then  
-        top := grid[index(i, j-1)]      // top cellule voisine du dessus
+        top := grid[k]      // top cellule voisine du dessus
     else top := undefined;              // si la cellule est hors de la grille, elle est indefini
 
     k := index(i-1, j);
     if (k <> -1) then 
-        right := grid[index(i, j-1)]
+        right := grid[k]
     else right := undefined;
 
     k := index(i, j+1);
     if (k <> -1) then 
-        bottom := grid[index(i, j-1)]
+        bottom := grid[k]
     else bottom := undefined;
 
     k := index(i+1, j);
     if (k <> -1) then 
-        left := grid[index(i, j-1)]
+        left := grid[k]
     else left := undefined;
 
 
@@ -118,14 +121,17 @@ begin
         end;
     {--------------------------------------------------------}
 
+    //writeln('le gras cest la vie');
     nbVoisins := count; // le nb de voisins qui n'ont jamais ete visite
     if (nbVoisins > 0) then 
         begin
-            r := Random(nbVoisins + 1);
+            r := Random(nbVoisins);
+            //writeln(r, ' ', nbVoisins);
             checkNeighbors := neighbors[r];
         end
     else
         begin
+            //writeln('undefini');
             checkNeighbors := undefined;
         end;
 end;
@@ -136,12 +142,12 @@ begin
     x := i * w; // position sur la grille
     y := j * w;
 
-    if (visited = true) then fillRect(x, y, w, w, 255, 0, 255, screen);
+    if (visited = true) then fillRect(x, y, w, w, 0, 0, 255, screen);
     
     if (walls[0] = true) then fillRect(x        , y        , w, 1, 255, 255, 255, screen);
-    if (walls[1] = true) then fillRect(x        , y        , 1, w, 255, 255, 255, screen);
-    if (walls[2] = true) then fillRect(x + W - 1, y        , w, 1, 255, 255, 255, screen);
-    if (walls[3] = true) then fillRect(x        , y + W - 1, w, 1, 255, 255, 255, screen);
+    if (walls[1] = true) then fillRect(x + w - 1, y        , 1, w, 255, 255, 255, screen);
+    if (walls[2] = true) then fillRect(x        , y + w - 1, w, 1, 255, 255, 255, screen);
+    if (walls[3] = true) then fillRect(x        , y        , 1, w, 255, 255, 255, screen);
 
 end;
 

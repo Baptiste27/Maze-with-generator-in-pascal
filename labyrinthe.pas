@@ -1,55 +1,125 @@
 program labyrinthe;
 
-const 
-    MAX = 100;
-    rows = 10;
-    cols = 10;
-    w = 40;
-
-
-Type 
-    Lab = array[1..MAX, 1..MAX] of Boolean;
-
-    Coord = record
-        x, y: Integer
-    end;
-
-    Cell = record
-        i, j: Integer;
-        visited: Boolean;
-        walls: array[1..4] of Boolean; 
-    end;
-
-var grid : array[0..MAX] of Cell;
+uses sdl, class_lab, const_lab;
 
 procedure setup;
-var i,j : Integer;
-var cells : Cell;
-var count : Integer;
-begin 
+var count, i, j, k: Integer;
+var cellule : Cell;
+begin
     count := 0;
-    for j := 0 to rows do
-        begin 
-            for i := 0 to cols do
-                begin
-                    cells.i := i;
-                    cells.j := j;
-                    grid[count] := cells;
-                    write(count,' ');
-                    count := count + 1;
-                    if i = 10 then writeln();
-                end
+    for j := 0 to rows -1 do
+    begin
+        for i := 0 to cols - 1 do
+        begin
+            cellule := Cell.new(i, j);
+            for k := 0 to 3 do
+            begin
+                cellule.walls[k] := true; // De base, les cellules ont les 4 murs
+            end;
+        grid[count] := cellule;
+        count := count + 1;
         end;
-    if cells.walls[1] <> true then writeln('Le silence eternel de ces espaces infinis m effraie');
+    end;
+    current := grid[0];
+    //grid[0].visited := true; // Première cellule sur laquelle on sera
 end;
 
-procedure show(cell: Cell);
-var x, y: Integer;
+
+procedure removeWalls(a, b : Cell);
+var x, y : Integer;
 begin
-    x := cell.i * w;
-    y := cell.j * w;
+    x := a.i - b.i;
+    if x = 1 then
+    begin
+        a.walls[3] := false;
+        b.walls[1] := false;
+    end
+    else if x = -1 then
+    begin
+        a.walls[1] := false;
+        b.walls[3] := false;
+    end
+    else
+    begin
+        y := a.j -  b.j;
+        if y = 1 then
+        begin
+            a.walls[0] := false;
+            b.walls[2] := false;
+        end
+        else if y = -1 then
+        begin
+            a.walls[2] := false;
+            b.walls[0] := false;
+        end
+    end
 end;
 
+
+procedure draw(var screen :  PSDL_Surface);
+var k, count : Integer;
 begin
-setup;
+    count := 0;
+    undefined := Cell.new(-1, -1);  // Cellule indefini
+
+    while count >= 0 do
+    begin
+        current.visited := true;
+        next := current.checkNeighbors();      // ETAPE 1 choisir un voisin aleatoirement
+        if next <> undefined then 
+        begin
+
+            stack[count] := current;
+            count := count + 1;
+            //writeln(count);
+
+            removeWalls(current, next);         // ETAPE 3 retirer les murs
+            next.visited := true;
+            current := next;
+        end
+        else if count >= 0 then       // si la stack, la pile n'est pas vide
+        begin
+            if count = 0 then count := -1
+            else
+            begin
+                count := count - 1;
+                //writeln(count, ' ', 'indefini');
+                current := stack[count];
+            end;
+        end;
+    end;
+
+    for k := 0 to Length(grid) - 1 do
+    begin
+        grid[k].show(screen);
+    end;
+
+end;
+
+
+
+
+procedure initialise(var screen : PSDL_Surface);
+begin
+    SDL_Init(SDL_INIT_VIDEO);
+    screen := SDL_SetVideoMode(LARGEUR, HAUTEUR, 32, SDL_SWSURFACE); //largeur, hauteur, *profondeur des couleurs, type de fenetre
+end;
+
+procedure termine(var screen : PSDL_Surface);
+begin
+    SDL_FreeSurface(screen);
+    SDL_Quit();
+end;
+
+
+
+var fenetre : PSDL_Surface;
+begin
+    randomize;
+    initialise(fenetre);
+    setup;
+    draw(fenetre);
+    SDL_Flip(fenetre);
+    SDL_Delay(5000);
+    termine(fenetre);
 end.
