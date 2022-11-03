@@ -48,7 +48,7 @@ begin
     randomize;
     initialise(fenetre);
     setup;
-    SDL_EnableKeyRepeat(0,500);
+    SDL_EnableKeyRepeat(0,1000);
     
 
     fin := False;
@@ -62,11 +62,12 @@ begin
         SDL_Delay(40); // 25 fps
 
         draw(fenetre);
-        SDL_Flip(fenetre);
         drawScene(fenetre, perso, sprites);
+        SDL_Flip(fenetre);
         SDL_PollEvent(@event);
         if event.type_ = SDL_KEYDOWN then processKey(event.key, perso);
         if event.type_ = SDL_QUITEV then fin := True;
+        if perso.x = arrivee.i then if perso.y = arrivee.j then fin := True;
     end;
 
     termine(fenetre);

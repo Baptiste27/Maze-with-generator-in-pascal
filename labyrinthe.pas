@@ -8,6 +8,8 @@ procedure setup;
 procedure removeWalls(a, b : Cell);
 procedure draw(var screen : PSDL_Surface);
 
+var arrivee : Cell;
+
 implementation
 
 procedure setup;
@@ -28,8 +30,17 @@ begin
         count := count + 1;
         end;
     end;
-    current := grid[0];
-    //grid[0].visited := true; // Première cellule sur laquelle on sera
+    current := grid[0]; // Premiere cellule sur laquelle on sera
+
+    grid[0].finish := 1; // Cellule de depart
+    
+    cell_final[0] := grid[index(cols - 1, 0)];
+    cell_final[1] := grid[index(0, rows - 1)];
+    cell_final[2] := grid[index(cols - 1, rows - 1)];
+
+    arrivee := cell_final[random(3)]; // choix aleatoire de la cellule de fin
+    arrivee.finish := 2;
+
 end;
 
 

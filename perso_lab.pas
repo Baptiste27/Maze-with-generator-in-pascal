@@ -56,26 +56,38 @@ begin
         SDLK_LEFT:  begin
                         perso.dir := left;
                         if x > 0 then
-                            if grid[index(x-1, y)].walls[3] <> True then
-                                x := x - 1;
+                            if grid[index(x, y)].walls[3] <> True then
+                            begin
+                                perso.x := x - 1;
+                                //writeln('gauche', x);
+                            end;
                     end;
         SDLK_RIGHT: begin
                        perso.dir := right;
                        if x < cols - 1 then
-                            if grid[index(x+1, y)].walls[1] <> True then
-                                x := x + 1;
+                            if grid[index(x, y)].walls[1] <> True then
+                            begin
+                                perso.x := x + 1;
+                                //writeln('droite', x);
+                            end;
                     end;
         SDLK_UP:    begin
                         perso.dir := top;
                         if y > 0 then
-                            if grid[index(x, y-1)].walls[0] <> True then
-                                y := y - 1;
+                            if grid[index(x, y)].walls[0] <> True then
+                            begin
+                                perso.y := y - 1;
+                                //writeln('haut', y);
+                            end;
                     end;
         SDLK_DOWN:  begin
                         perso.dir := bottom;
                         if y < rows - 1 then
-                            if grid[index(x, y+1)].walls[2] <> True then
-                                y := y + 1;
+                            if grid[index(x, y)].walls[2] <> True then
+                            begin    
+                                perso.y := y + 1;
+                                //writeln('bas', y);
+                            end;
                     end;
     end;
 end;

@@ -17,6 +17,7 @@ type
         i, j : Integer;
         walls : Array[0..3] of Boolean; //les booleans sont initialise sur false
         visited : Boolean;
+        finish : Integer;  // 0 -> cellule normal / 1 -> cellule de depart / 2 -> cellule d'arriver
         
         constructor new(x, y : Integer);
         function checkNeighbors() : Cell;
@@ -27,6 +28,7 @@ function index(i, j : Integer) : Integer;
 
 var grid : array[0..(nbCell-1)] of Cell; // nb cellules dans le labyrinthe
 var stack : array[0..nbCell-1] of Cell; // 100 cellules dans le labyrinthe
+var cell_final : Array[0..2] of Cell;
 var current, next: Cell;
 var undefined : Cell;
 
@@ -142,7 +144,10 @@ begin
     x := i * w; // position sur la grille
     y := j * w;
 
-    if (visited = true) then fillRect(x, y, w, w, 0, 0, 255, screen);
+    //if (visited = true) then fillRect(x, y, w, w, 0, 0, 255, screen);
+    if (finish = 0) then fillRect(x, y, w, w, 0, 0, 255, screen)
+    else if (finish = 2) then fillRect(x, y, w, w, 255, 51, 51, screen)
+    else fillRect(x, y, w, w, 102, 204, 0, screen);
     
     if (walls[0] = true) then fillRect(x        , y        , w, 1, 255, 255, 255, screen);
     if (walls[1] = true) then fillRect(x + w - 1, y        , 1, w, 255, 255, 255, screen);

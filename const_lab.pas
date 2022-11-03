@@ -5,9 +5,9 @@ interface
 uses sdl;
 
 const
-    HAUTEUR = 400;
-    LARGEUR = 400;
-    w = 60; // cellule = carre de w*w
+    HAUTEUR = 800;
+    LARGEUR = 1200;
+    w = 30; // cellule = carre de w*w
     cols = LARGEUR div w; //nb de colonne largeur de la zone diviser par la taille d une cellule
     rows = HAUTEUR div w;
     nbCell = cols * rows;
