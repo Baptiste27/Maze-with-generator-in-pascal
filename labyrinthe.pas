@@ -1,6 +1,14 @@
-program labyrinthe;
+unit labyrinthe;
+
+interface
 
 uses sdl, class_lab, const_lab;
+
+procedure setup;
+procedure removeWalls(a, b : Cell);
+procedure draw(var screen : PSDL_Surface);
+
+implementation
 
 procedure setup;
 var count, i, j, k: Integer;
@@ -77,9 +85,9 @@ begin
             next.visited := true;
             current := next;
         end
-        else if count >= 0 then       // si la stack, la pile n'est pas vide
+        else if count >= 0 then       // si la pile n'est pas vide
         begin
-            if count = 0 then count := -1
+            if count = 0 then count := -1 // si count = 0, on a tout depiler
             else
             begin
                 count := count - 1;
@@ -96,30 +104,4 @@ begin
 
 end;
 
-
-
-
-procedure initialise(var screen : PSDL_Surface);
-begin
-    SDL_Init(SDL_INIT_VIDEO);
-    screen := SDL_SetVideoMode(LARGEUR, HAUTEUR, 32, SDL_SWSURFACE); //largeur, hauteur, *profondeur des couleurs, type de fenetre
-end;
-
-procedure termine(var screen : PSDL_Surface);
-begin
-    SDL_FreeSurface(screen);
-    SDL_Quit();
-end;
-
-
-
-var fenetre : PSDL_Surface;
-begin
-    randomize;
-    initialise(fenetre);
-    setup;
-    draw(fenetre);
-    SDL_Flip(fenetre);
-    SDL_Delay(5000);
-    termine(fenetre);
 end.
