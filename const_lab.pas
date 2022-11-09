@@ -5,12 +5,12 @@ interface
 uses sdl;
 
 const
-    HAUTEUR = 800;
+    HAUTEUR = 800;                  // Taille de la surface d'affichage
     LARGEUR = 1200;
-    w = 30; // cellule = carre de w*w
-    cols = LARGEUR div w; //nb de colonne largeur de la zone diviser par la taille d une cellule
+    w = 30;                         // Taille des cellules = carré de w*w
+    cols = LARGEUR div w;           // Nombre de colonnes
     rows = HAUTEUR div w;
-    nbCell = cols * rows;
+    nbCell = cols * rows;           // Nombre de cellules
 
 procedure fillRect(x, y, w, h, r, g, b : Integer; screen : PSDL_Surface);
 procedure blitSurface(x, y, w, h : Integer; screen, surface : PSDL_Surface);
@@ -19,6 +19,7 @@ procedure blitSurface(x, y, w, h : Integer; screen, surface : PSDL_Surface);
 implementation
 
 procedure fillRect(x, y, w, h, r, g, b : Integer; screen : PSDL_Surface);
+{ Simplifie la procedure SDL_FillRect }
 var destination_rect : TSDL_RECT;
 begin
     destination_rect.x := x;
@@ -29,6 +30,7 @@ begin
 end;
 
 procedure blitSurface(x, y, w, h : Integer; screen, surface : PSDL_Surface);
+{ Simplifie la procedure SDL_BlitSurface }
 var destination_rect : TSDL_RECT;
 begin
     destination_rect.x := x;

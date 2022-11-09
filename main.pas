@@ -1,8 +1,6 @@
-{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}
-
 program main;
 
-uses labyrinthe, const_lab, perso_lab, sdl, sdl_image, sysutils, sdl_ttf;
+uses labyrinthe, const_lab, class_lab, perso_lab, sdl, sdl_image, sysutils, sdl_ttf;
 
 
 procedure initialise(var screen : PSDL_Surface);
@@ -18,7 +16,7 @@ begin
 end;
 
 function initSprites() : PSpriteSheet;
-{On charge les textures en memoires}
+{ On charge les textures en memoires }
 var newSpriteSheet : PSpriteSheet;
 begin
     new(newSpriteSheet);
@@ -30,7 +28,7 @@ begin
 end;
 
 procedure disposeSprite(p_sprite_sheet: PSpriteSheet);
-{On décharge les textures de la mémoire}
+{ On décharge les textures de la mémoire }
 begin
     SDL_FreeSurface(p_sprite_sheet^.up);
     SDL_FreeSurface(p_sprite_sheet^.down);
@@ -53,7 +51,7 @@ begin
 
     fin := False;
     sprites := initSprites();
-    perso.x := 0;
+    perso.x := 0;                   // Position de départ du personnage
     perso.y := 0;
     perso.dir := bottom;
 

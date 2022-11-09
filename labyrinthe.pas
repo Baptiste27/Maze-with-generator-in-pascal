@@ -5,7 +5,7 @@ interface
 uses sdl, class_lab, const_lab;
 
 procedure setup;
-procedure removeWalls(a, b : Cell);
+procedure retirer_murs(a, b : Cell);
 procedure draw(var screen : PSDL_Surface);
 
 var arrivee : Cell;
@@ -13,6 +13,7 @@ var arrivee : Cell;
 implementation
 
 procedure setup;
+{ Initialise toutes les cellules du labyrinthe }
 var count, i, j, k: Integer;
 var cellule : Cell;
 begin
@@ -21,96 +22,108 @@ begin
     begin
         for i := 0 to cols - 1 do
         begin
-            cellule := Cell.new(i, j);
+            cellule := Cell.new(i, j);          // Création d'une nouvelle cellule
             for k := 0 to 3 do
             begin
-                cellule.walls[k] := true; // De base, les cellules ont les 4 murs
+                cellule.walls[k] := true;       // La nouvelle cellule possède 4 murs
             end;
-        grid[count] := cellule;
+        grille[count] := cellule;                 // Ajout de la cellule dans un tableau
         count := count + 1;
         end;
     end;
-    current := grid[0]; // Premiere cellule sur laquelle on sera
 
-    grid[0].finish := 1; // Cellule de depart
+
+    actuelle := grille[0];                         // Initialise la cellule actuelle sur la première cellule du tableau
+
+    grille[0].finish := 1;                         // Choix de la cellule de départ
     
-    cell_final[0] := grid[index(cols - 1, 0)];
-    cell_final[1] := grid[index(0, rows - 1)];
-    cell_final[2] := grid[index(cols - 1, rows - 1)];
 
-    arrivee := cell_final[random(3)]; // choix aleatoire de la cellule de fin
+    { Choix aléatoire de la cellule de fin }
+    cell_final[0] := grille[index(cols - 1, 0)];      
+    cell_final[1] := grille[index(0, rows - 1)];
+    cell_final[2] := grille[index(cols - 1, rows - 1)];
+
+    arrivee := cell_final[random(3)];
     arrivee.finish := 2;
 
 end;
 
 
-procedure removeWalls(a, b : Cell);
+procedure retirer_murs(a, b : Cell);
+{ Retire les murs }
 var x, y : Integer;
 begin
-    x := a.i - b.i;
-    if x = 1 then
+    x := a.i - b.i;                 
+    if x = 1 then                       // La cellule a a pour voisin de gauche la cellule b
     begin
-        a.walls[3] := false;
-        b.walls[1] := false;
+        a.walls[3] := false;            // Supprime le mur de gauche de la cellule a
+        b.walls[1] := false;            // ------------------ droite ------------- b
     end
-    else if x = -1 then
+    else if x = -1 then                 // La cellule a a pour voisin de droite la cellule b
     begin
-        a.walls[1] := false;
-        b.walls[3] := false;
+        a.walls[1] := false;            // Supprime le mur de droite de la cellule a
+        b.walls[3] := false;            // ------------------ gauche ------------- b
     end
     else
     begin
         y := a.j -  b.j;
-        if y = 1 then
+        if y = 1 then                   // La cellule a a pour voisin du bas la cellule b
         begin
-            a.walls[0] := false;
-            b.walls[2] := false;
+            a.walls[0] := false;        // Supprime le mur du bas de la cellule a
+            b.walls[2] := false;        // ------------------ haut ------------ b
         end
-        else if y = -1 then
+        else if y = -1 then             // La cellule a a pour voisin du haut la cellule b
         begin
-            a.walls[2] := false;
-            b.walls[0] := false;
+            a.walls[2] := false;        // Supprime le mur du haut de la cellule a
+            b.walls[0] := false;        // ------------------ bas -------------- b
         end
     end
 end;
 
 
 procedure draw(var screen :  PSDL_Surface);
+{ Génère aléatoirement et dessine le labyrinthe }
 var k, count : Integer;
 begin
     count := 0;
-    undefined := Cell.new(-1, -1);  // Cellule indefini
+    undefined := Cell.new(-1, -1);              // Création d'une cellule "indefini"
 
     while count >= 0 do
     begin
-        current.visited := true;
-        next := current.checkNeighbors();      // ETAPE 1 choisir un voisin aleatoirement
+        actuelle.visited := true;
+        next := actuelle.checkNeighbors();          // ETAPE 1 Choix aléatoire d'un voisin
         if next <> undefined then 
         begin
 
-            stack[count] := current;
+            stack[count] := actuelle;               // ETAPE 2 Ajout de la cellule actuelle dans une pile
             count := count + 1;
             //writeln(count);
 
-            removeWalls(current, next);         // ETAPE 3 retirer les murs
-            next.visited := true;
-            current := next;
+            retirer_murs(actuelle, next);           // ETAPE 3 Retirer les murs entre la cellule actuelle et la prochaine cellule
+
+            next.visited := true;                   // ETAPE 4 Marquer la cellule choisi comme visité
+            actuelle := next;                       
         end
-        else if count >= 0 then       // si la pile n'est pas vide
+
+        { Tant que la cellule next est indéfini et que la pile n'est pas vide, 
+          alors on dépile jusqu'à retrouver une cellule possédant un voisin pas encore visité }
+
+        else if count >= 0 then                     // Si la cellule next est indéfini et que la pile n'est pas vide
         begin
-            if count = 0 then count := -1 // si count = 0, on a tout depiler
+            if count = 0 then count := -1           // Si count = 0, on a tout depiler
             else
             begin
                 count := count - 1;
                 //writeln(count, ' ', 'indefini');
-                current := stack[count];
+                actuelle := stack[count];
             end;
         end;
     end;
 
-    for k := 0 to Length(grid) - 1 do
+
+    for k := 0 to Length(grille) - 1 do
     begin
-        grid[k].show(screen);
+        grille[k].show(screen);             // On affiche la grille du labyrinthe
     end;
 
 end;

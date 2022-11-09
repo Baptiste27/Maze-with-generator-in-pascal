@@ -10,14 +10,11 @@ uses const_lab, crt, sdl;
 
 type 
     Cell = class
-//    private
-//        i, j : Integer; //coordonnes de la cellule
-
     public
-        i, j : Integer;
-        walls : Array[0..3] of Boolean; //les booleans sont initialise sur false
+        i, j : Integer;                     // i -> Colonne de la cellule  /  j -> Ligne de la cellule
+        walls : Array[0..3] of Boolean;     //  Les booleans sont initialise sur false
         visited : Boolean;
-        finish : Integer;  // 0 -> cellule normal / 1 -> cellule de depart / 2 -> cellule d'arriver
+        finish : Integer;                   // 0 -> cellule normal / 1 -> cellule de depart / 2 -> cellule d'arriver
         
         constructor new(x, y : Integer);
         function checkNeighbors() : Cell;
@@ -26,23 +23,25 @@ end;
 
 function index(i, j : Integer) : Integer;
 
-var grid : array[0..(nbCell-1)] of Cell; // nb cellules dans le labyrinthe
-var stack : array[0..nbCell-1] of Cell; // 100 cellules dans le labyrinthe
+var grille : array[0..nbCell-1] of Cell;
+var stack : array[0..nbCell-1] of Cell;
 var cell_final : Array[0..2] of Cell;
-var current, next: Cell;
+var actuelle, next: Cell;
 var undefined : Cell;
 
 implementation
 
 constructor Cell.new(x, y : Integer);
+{ Création d'une nouvelle cellule }
 begin
     i := x;
     j := y;
 end;
 
 function index(i, j : Integer) : Integer;
+{ Calcul l'index de la cellule dans un tableau a 1 dimension}
 begin
-    if ((i < 0) or (j < 0) or (i > cols - 1) or (j > rows - 1)) then index := -1 // cas des cellules sur le bord de la grille
+    if ((i < 0) or (j < 0) or (i > cols - 1) or (j > rows - 1)) then index := -1            // Cas des cellules en dehors de la grille ( utile lorsque l'on vérifie les voisins )
     else index := i + j * cols;
 end;
 
@@ -55,40 +54,44 @@ var nbVoisins, count, count2, k, r : Integer;
 begin
     count := 0;                    
     count2 := 3;
-    undefined := Cell.new(-1, -1);  // Cellule indefini
+    undefined := Cell.new(-1, -1);          // Création d'une cellule indéfini
 
-    k := index(i, j-1);                 // index de la cellule voisine du dessus
+    k := index(i, j-1);                     // Index de la cellule voisine du dessus
     if (k <> -1) then  
-        top := grid[k]      // top cellule voisine du dessus
-    else top := undefined;              // si la cellule est hors de la grille, elle est indefini
+        top := grille[k]                    // top cellule voisine du dessus
+    else 
+        top := undefined;                   // Cellule hors de la grille => Cellule indéfini
 
-    k := index(i-1, j);
+    k := index(i-1, j);                     // Index de la cellule voisine de gauche
     if (k <> -1) then 
-        right := grid[k]
-    else right := undefined;
+        right := grille[k]
+    else 
+        right := undefined;
 
-    k := index(i, j+1);
+    k := index(i, j+1);                     // Index de la cellule voisine du dessous
     if (k <> -1) then 
-        bottom := grid[k]
-    else bottom := undefined;
+        bottom := grille[k]
+    else 
+        bottom := undefined;
 
-    k := index(i+1, j);
+    k := index(i+1, j);                     // Index de la cellule voisine de droite
     if (k <> -1) then 
-        left := grid[k]
-    else left := undefined;
+        left := grille[k]
+    else 
+        left := undefined;
 
 
-    if (top.visited <> true) and (top <> undefined) then    // Verifie que la cellule n'a jamais ete visite et est defini
+    if (top.visited <> true) and (top <> undefined) then            // Verifie que la cellule n'a jamais ete visite et est defini
         begin
-            neighbors[count] := top;                        // Si c'est le cas, on l'ajoute dans le debut du tableau
+            neighbors[count] := top;                                // Ajout dans le debut du tableau
             count := count + 1;
         end
     else 
         begin
-            neighbors[count2] := top;                       // Sinon on l'ajoute, vers la fin du tableau
+            neighbors[count2] := top;                               // Sinon ajout dans la fin du tableau
             count2 := count2 - 1;
         end;
-    {--------------------------------------------------------} // <- sert a rien
+    {--------------------------------------------------------} // <- sert à rien
     if (right.visited <> true) and (right <> undefined) then
         begin
             neighbors[count] := right;
@@ -124,7 +127,9 @@ begin
     {--------------------------------------------------------}
 
     //writeln('le gras cest la vie');
-    nbVoisins := count; // le nb de voisins qui n'ont jamais ete visite
+    nbVoisins := count;         // Nombre de voisins qui n'ont jamais ete visite
+
+    { Choisi aléatoirement une cellule qui n'a pas encore été visité }
     if (nbVoisins > 0) then 
         begin
             r := Random(nbVoisins);
@@ -141,18 +146,21 @@ end;
 procedure Cell.show(screen : PSDL_Surface);
 var x, y : Integer;
 begin
-    x := i * w; // position sur la grille
+    x := i * w;         // Positions x et y de la cellule sur la surface screen
     y := j * w;
 
     //if (visited = true) then fillRect(x, y, w, w, 0, 0, 255, screen);
-    if (finish = 0) then fillRect(x, y, w, w, 0, 0, 255, screen)
-    else if (finish = 2) then fillRect(x, y, w, w, 255, 51, 51, screen)
-    else fillRect(x, y, w, w, 102, 204, 0, screen);
+    if (finish = 0) 
+        then fillRect(x, y, w, w, 0, 0, 255, screen)            // Couleur des cellules "normales"
+    else if (finish = 2) 
+        then fillRect(x, y, w, w, 255, 51, 51, screen)          // Couleur pour la cellule d'arriver
+    else 
+        fillRect(x, y, w, w, 102, 204, 0, screen);              // Couleur pour la cellule de départ
     
-    if (walls[0] = true) then fillRect(x        , y        , w, 1, 255, 255, 255, screen);
-    if (walls[1] = true) then fillRect(x + w - 1, y        , 1, w, 255, 255, 255, screen);
-    if (walls[2] = true) then fillRect(x        , y + w - 1, w, 1, 255, 255, 255, screen);
-    if (walls[3] = true) then fillRect(x        , y        , 1, w, 255, 255, 255, screen);
+    if (walls[0] = true) then fillRect(x        , y        , w, 1, 255, 255, 255, screen);          // Ligne à gauche de la cellule
+    if (walls[1] = true) then fillRect(x + w - 1, y        , 1, w, 255, 255, 255, screen);          // Ligne en haut de la cellule
+    if (walls[2] = true) then fillRect(x        , y + w - 1, w, 1, 255, 255, 255, screen);          // Ligne à droite de la cellule
+    if (walls[3] = true) then fillRect(x        , y        , 1, w, 255, 255, 255, screen);          // Ligne en bas de la cellule
 
 end;
 
